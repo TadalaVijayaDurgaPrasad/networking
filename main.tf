@@ -35,7 +35,7 @@
 #             aws_eip_id = ""
 #             subnet_id = ""
 #         }
-      
+
 #     }
 #     route_table_details = {
 #         public = {
@@ -53,7 +53,7 @@
 #             nat_required = true
 #         }
 #     }
-  
+
 # }
 
 
@@ -72,11 +72,11 @@ module "subnet" {
 
   subnet_details = {
     public = {
-      vpc_id       = module.vpc.vpc_id
-      subnet_az    = "us-east-1a"
-      subnet_cidr  = "10.0.1.0/24"
-      subnet_name  = "dev-pub-subnet"
-      subnet_type  = "public"
+      vpc_id      = module.vpc.vpc_id
+      subnet_az   = "us-east-1a"
+      subnet_cidr = "10.0.1.0/24"
+      subnet_name = "dev-pub-subnet"
+      subnet_type = "public"
     }
     privateA = {
       vpc_id      = module.vpc.vpc_id
@@ -134,6 +134,39 @@ module "route_table" {
       gateway_id = module.nat_gw.nat_gw_id["nat1"]
     }
   }
+}
+
+module "nacl" {
+  source = "./packages/nacl"
+  network_acl_details = {
+    nacl1 = {
+      vpc_id           = module.vpc.vpc_id
+      network_acl_name = "test-nacl"
+      subnets          = values(module.subnet.private_subnet_ids)
+      egress_rules = {
+        egrule1={
+        rule_no    = 100
+        protocol   = "tcp"
+        action     = "allow"
+        cidr_block = "10.0.1.0/24"
+        from_port  = 443
+        to_port    = 443
+        # egress     = true
+      }}
+      ingress_rules = {
+        ingrule1={
+        rule_no    = 100
+        protocol   = "tcp"
+        action     = "allow"
+        cidr_block = "10.0.1.0/24"
+        from_port  = 443
+        to_port    = 443
+        # ingress = true
+      }}
+
+    }
+  }
+
 }
 
 resource "aws_route_table_association" "public_assoc" {
