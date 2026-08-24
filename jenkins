@@ -1,0 +1,81 @@
+pipeline{
+    agent {
+        label "dev"
+    }
+    parameters{
+        string(name: 'Repo_url', defaultValue: '', description: "Url of the GIthub repo")
+        choice(name: 'Branch', choices: ['main','master', 'terraform', 'develop'], description: "choose branch to deploy")
+        choice(name: 'Action', choices: ['apply', 'destroy'], description: "infrastructure action")
+        choice(name: 'Environment', choices: ['dev', 'uat', 'stage', 'prod'], description: "choose environment to deploy")
+        choice(name: 'Account', choices: ['753805950551', '917791789036'], description: 'Account number to deploy')
+        choice(name: 'Region', choices: ['us-east-1', 'us-west-1', 'eu-central-1', 'eu-west-1'], description: 'Choose Region to deploy')
+    }
+    stages{
+        stage("checkout"){
+            steps {
+                cleanWs()
+                echo "workspace cleaned"
+            }
+        }
+        stage ("Code") {
+            steps{
+                // git branch: 'main', url: 'https://github.com/TadalaVijayaDurgaPrasad/networking.git'
+                git branch: "${params.Branch}", url: "${params.Repo_url}"
+                echo 'branch: "${params.Branch}", url: "${params.Repo_url}"'
+            }
+        }
+        stage("Assume Role") {
+            steps {
+                script {
+                    echo "${params.Environment}"
+                    def roleArn = "arn:aws:iam::${params.Account}:role/vc-devops-deployment-role"
+                    echo "${roleArn}"
+        
+                    def assumeRole = sh(
+                        script: "aws sts assume-role --role-arn ${roleArn} --role-session-name jenkinsSession",
+                        returnStdout: true
+                    ).trim()
+        
+                    def creds = readJSON text: assumeRole
+                    env.AWS_ACCESS_KEY_ID     = creds.Credentials.AccessKeyId
+                    env.AWS_SECRET_ACCESS_KEY = creds.Credentials.SecretAccessKey
+                    env.AWS_SESSION_TOKEN     = creds.Credentials.SessionToken
+                }
+            }
+        }
+        stage("Initialising") {
+            steps{
+                echo "Deployment stage"
+                sh 'terraform init'
+                sh 'terraform plan'
+            }
+        }
+        stage('Terraform Workspace Setup') {
+            steps {
+                script {
+                    // Check if workspace exists
+                    def workspaceName = "${params.Environment}-${Region}"
+                    echo "${workspaceName}"
+                    def workspaceExists = sh(
+                        script: "terraform workspace list | grep -w ${workspaceName} || true",
+                        returnStdout: true
+                    ).trim()
+
+                    if (workspaceExists) {
+                        echo "Workspace ${workspaceName} already exists. Selecting it..."
+                        sh "terraform workspace select ${workspaceName}"
+                    } else {
+                        echo "Workspace ${workspaceName} does not exist. Creating and selecting it..."
+                        sh "terraform workspace new ${workspaceName}"
+                    }
+                }
+            }
+        }
+        stage("deploy") {
+            steps{
+                echo "terraform ${Action} "
+                sh 'terraform ${Action} --auto-approve'
+            }
+        }
+    }
+}
