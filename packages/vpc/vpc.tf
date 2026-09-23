@@ -9,8 +9,8 @@ resource "aws_vpc" "this" {
   }
 
   tags = merge(var.common_tags, {
-    # Name = var.vpc_name "aaip-infra-euc1-ajb-stage-vpc"
-    Name = "aaip-infra-${var.region_code[var.region]}-${var.common_tags["Project"]}-${var.common_tags["Environment"]}-vpc"
+    Environment = var.environment
+    Name = "aaip-infra-${var.region_code[var.region]}-${var.common_tags["Project"]}-${var.environment}-vpc"
   })
 }
 

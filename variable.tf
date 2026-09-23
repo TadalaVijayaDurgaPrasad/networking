@@ -3,14 +3,25 @@ variable "region" {
   type        = string
 }
 
-variable "vpc_name" {
-  description = "Name of the VPC"
+variable "environment" {
+  description = "Name of the environment"
   type        = string
 }
 
 variable "vpc_cidr" {
   description = "CIDR block of the VPC"
   type        = string
+}
+
+variable "prevent_destroy" {
+    description = "Prevent destroy flag for the VPC"
+    type        = bool
+    default     = false
+}
+variable "create_before_destroy" {
+    description = "Create before destroy flag for the VPC"
+    type        = bool
+    default     = false
 }
 
 variable "subnet_details" {

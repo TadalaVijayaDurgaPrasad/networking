@@ -7,17 +7,28 @@ variable "region_code" {
   type        = map(string)
   default     = {}
 }
-variable "vpc_name" {
-    description = "Name of the VPC"
+variable "environment" {
+    description = "Name of the environment"
     type = string
 }
 variable "vpc_cidr" {
     description = "CIDR block for the VPC"
     type = string
 }
+variable "prevent_destroy" {
+    description = "Prevent destroy flag for the VPC"
+    type        = bool
+    default     = false
+}
+variable "create_before_destroy" {
+    description = "Create before destroy flag for the VPC"
+    type        = bool
+    default     = false
+}
 variable "common_tags" {
   description = "Common resource tags"
   type        = map(string)
   default     = {}
 }
+
 

@@ -10,8 +10,8 @@ resource "aws_subnet" "this" {
     create_before_destroy = false
   }
   tags = merge(var.common_tags, {
-    # Name = each.value.subnet_name
-    Name = "aaip-infra-${var.region_code[var.region]}-${var.common_tags["Project"]}-${var.common_tags["Environment"]}-${each.value.subnet_name}"
+    environment = var.environment
+    Name = "aaip-infra-${var.region_code[var.region]}-${var.common_tags["Project"]}-${var.environment}-${each.value.subnet_name}"
   })
 }
 

@@ -1,6 +1,8 @@
 region = "eu-central-1"
-vpc_name = "aaip-infra-euc1-ajb-stage-vpc" 
+environment = "dev"
 vpc_cidr = "10.0.0.0/16"
+prevent_destroy = false
+create_before_destroy = false
 subnet_details = {
   public = {
     subnet_az   = "eu-central-1a"

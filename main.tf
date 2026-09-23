@@ -4,11 +4,13 @@ provider "aws" {
 
 module "vpc" {
   source      = "./packages/vpc"
-  vpc_name    = var.vpc_name
   vpc_cidr    = var.vpc_cidr
   common_tags = local.common_tags
   region      = var.region
   region_code = local.region_code
+  environment  = var.environment
+  prevent_destroy       = var.prevent_destroy
+  create_before_destroy = var.create_before_destroy
 }
 
 module "subnet" {
@@ -18,7 +20,9 @@ module "subnet" {
   depends_on  = [module.vpc]
   region      = var.region
   region_code = local.region_code
-
+  environment  = var.environment
+  prevent_destroy       = var.prevent_destroy
+  create_before_destroy = var.create_before_destroy
   subnet_details = {
     for k, v in var.subnet_details : k => {
       vpc_id      = module.vpc.vpc_id

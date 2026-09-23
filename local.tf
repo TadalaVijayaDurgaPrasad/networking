@@ -1,20 +1,20 @@
 locals {
-  environment = "dev"
+  # environment = "dev"
   project     = "networking"
   owner       = "devops"
   cost_center = "platform"
   app_name    = "networking-landing-zone"
 
-  env_details = {
-    env         = local.environment
-    project     = local.project
-    owner       = local.owner
-    cost_center = local.cost_center
-    app_name    = local.app_name
-  }
+  # env_details = {
+  #   env         = local.environment 
+  #   project     = local.project
+  #   owner       = local.owner
+  #   cost_center = local.cost_center
+  #   app_name    = local.app_name
+  # }
 
   common_tags = {
-    Environment = local.environment
+    # Environment = local.environment
     Project     = local.project
     Owner       = local.owner
     CostCenter  = local.cost_center
