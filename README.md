@@ -3,8 +3,7 @@ terraform AWS resources link: https://registry.terraform.io/providers/hashicorp/
 it is used to get help on creating AWS resources using terraform
 
 
-# terraform init -reconfigure -backend-config="key=clients/ajb/networking/terraform.tfstate"
-# terraform init -reconfigure -backend-config="key=clients/dtcl/networking/terraform.tfstate"
+# terraform init -reconfigure -backend-config="key=clients/{client}/{environment}/terraform.tfstate"
 # terraform apply -var-file="stage_vars.tfvars"
 # terraform destroy -var-file="stage_vars.tfvars"
 
