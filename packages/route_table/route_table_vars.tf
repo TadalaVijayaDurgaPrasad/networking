@@ -6,3 +6,9 @@ variable "route_table_details" {
         gateway_id = string
     }))
 }
+
+variable "common_tags" {
+  description = "Common resource tags"
+  type        = map(string)
+  default     = {}
+}

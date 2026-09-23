@@ -8,3 +8,9 @@ variable "nat_gw_details" {
         require_aws_eip  = optional(bool, false)
     }))
 }
+
+variable "common_tags" {
+  description = "Common resource tags"
+  type        = map(string)
+  default     = {}
+}

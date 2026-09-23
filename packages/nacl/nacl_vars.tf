@@ -11,7 +11,6 @@ variable "network_acl_details" {
             cidr_block = string
             from_port = number
             to_port = number
-            # egress = bool
         }))
         ingress_rules = map(object({
             rule_no = number
@@ -20,9 +19,13 @@ variable "network_acl_details" {
             cidr_block = string
             from_port = number
             to_port=number
-            # ingress = bool
         }))
 
     }))
-  
+}
+
+variable "common_tags" {
+  description = "Common resource tags"
+  type        = map(string)
+  default     = {}
 }

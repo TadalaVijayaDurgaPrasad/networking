@@ -1,12 +1,18 @@
 resource "aws_subnet" "this" {
-    for_each = var.subnet_details
-    vpc_id = each.value.vpc_id
-    cidr_block = each.value.subnet_cidr
-    availability_zone = each.value.subnet_az
-    map_public_ip_on_launch = each.value.subnet_type == "public" ? true : false
-    tags = {
-        Name = each.value.subnet_name
-    }
+  for_each = var.subnet_details
+
+  vpc_id                  = each.value.vpc_id
+  cidr_block              = each.value.subnet_cidr
+  availability_zone       = each.value.subnet_az
+  map_public_ip_on_launch = each.value.subnet_type == "public" ? true : false
+  lifecycle {
+    prevent_destroy       = false
+    create_before_destroy = false
+  }
+  tags = merge(var.common_tags, {
+    # Name = each.value.subnet_name
+    Name = "aaip-infra-${var.region_code[var.region]}-${var.common_tags["Project"]}-${var.common_tags["Environment"]}-${each.value.subnet_name}"
+  })
 }
 
 output "public_subnet_id" {

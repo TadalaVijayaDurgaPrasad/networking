@@ -1,13 +1,20 @@
 resource "aws_route_table" "this" {
-    for_each = var.route_table_details
-    vpc_id = each.value.vpc_id
-    route {
-        cidr_block = each.value.route_cidr
-        gateway_id = each.value.gateway_id
-    }
-    tags = {
-        Name = each.key
-    }
+  for_each = var.route_table_details
+  vpc_id   = each.value.vpc_id
+
+  lifecycle {
+    prevent_destroy       = false
+    create_before_destroy = false
+  }
+
+  route {
+    cidr_block = each.value.route_cidr
+    gateway_id = each.value.gateway_id
+  }
+
+  tags = merge(var.common_tags, {
+    Name = each.key
+  })
 }
 
 output "route_table_id" {
